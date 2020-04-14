@@ -1,7 +1,13 @@
 A pull based event emitter, or event queue.
 
-The difference to traditional event emitters is that it is not reacting to events, but 
-is instead is storing them in a queue until they are consumed. 
+The difference to traditional event emitters is that this one is not reacting to events
+but is instead is storing them in a queue until they are consumed. 
+
+### Install
+
+```bash
+$ npm install --save @heliks/event-queue
+```
 
 ### Example
 
