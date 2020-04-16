@@ -23,7 +23,11 @@ export class EventQueue<T = unknown> {
 
   /** Pushes an event to the end of the queue. */
   public push(event: T): void {
-    this.events.push(event);
+    // No need to push the event if no one is listening since it won't
+    // be consumed either way.
+    if (this.subscribers.length > 0) {
+      this.events.push(event);
+    }
   }
 
   /**

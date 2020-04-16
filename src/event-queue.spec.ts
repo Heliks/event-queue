@@ -14,6 +14,27 @@ describe('EventQueue', () => {
     events = new EventQueue<TestEvent>();
   });
 
+  it('should push events', () => {
+    events.subscribe();
+
+    events.push(TestEvent.A);
+    events.push(TestEvent.B);
+
+    // Since no one is listening, the event shouldn't really be pushed
+    expect(events.size).toBe(2);
+  });
+
+  it('should not push events if there are no subscribers to consume them', () => {
+    events.push(TestEvent.A);
+    events.push(TestEvent.B);
+
+    events.subscribe();
+
+    events.push(TestEvent.C);
+
+    expect(events.size).toBe(1);
+  });
+
   it('should get the next event of a subscriber', () => {
     // This should be picked up by none of the subscribers.
     events.push(TestEvent.A);
