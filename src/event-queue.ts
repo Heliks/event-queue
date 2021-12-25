@@ -10,16 +10,21 @@ export interface Subscriber {
 
 export class EventQueue<T = unknown> {
 
+  /** Contains all events that are currently in the queue. */
+  private readonly events: T[] = [];
+
+  /** Contains all registered subscribers. */
+  private readonly subscribers: Subscriber[] = [];
+
   /** Returns the total amount of items currently in the queue. */
   public get size(): number {
     return this.events.length;
   }
 
-  /** Contains all events that are currently in the queue. */
-  protected readonly events: T[] = [];
-
-  /** Contains all registered subscribers. */
-  protected readonly subscribers: Subscriber[] = [];
+  /** Contains the total amount of subscribers in the queue. */
+  public get subscriberAmount(): number {
+    return this.subscribers.length;
+  }
 
   /** Pushes an event to the end of the queue. */
   public push(event: T): void {
@@ -31,10 +36,8 @@ export class EventQueue<T = unknown> {
   }
 
   /**
-   * Returns a `Subscriber` that later will be used to read from the queue.
-   *
-   * Note: All subscribers must consume their events or else the queue will
-   * grow indefinitely which can lead to memory leaks.
+   * Returns a `Subscriber` that can consume events from the queue. All subscribers must
+   * consume their events or else the queue will grow indefinitely.
    */
   public subscribe(): Subscriber {
     const subscriber = {
@@ -62,8 +65,8 @@ export class EventQueue<T = unknown> {
   }
 
   /**
-   * Returns an iterator that iterates over all un-consumed events of the given
-   * `subscriber`. Automatically shrinks the queue afterwards.
+   * Returns an iterator over all non-consumed events of the given `subscriber`. Shrinks
+   * the queue afterwards.
    *
    * ```typescript
    * const events = new EventQueue<number>();
@@ -76,7 +79,7 @@ export class EventQueue<T = unknown> {
    * queue.push(3);
    *
    * for (const event of events.read(subscription)) {
-   *     console.log(event);
+ *     console.log(event);
    * }
    * ```
    *
