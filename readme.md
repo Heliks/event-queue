@@ -11,8 +11,8 @@ $ npm install --save @heliks/event-queue
 
 ### Example
 
-When subscribing to a queue a `Subscriber` is returned, which then can be used to read
-future events. 
+When subscribing to a queue a `Subscriber` is returned which can be used to read 
+future events from the queue. 
 
 ```ts
 import { EventQueue } from '@heliks/event-queue';
@@ -22,17 +22,17 @@ const events = new EventQueue<string>();
 // The event handle that is used to consume the event queue.
 const subscriber = events.subscribe();
 
-events.send('foo');
-events.send('bar');
+events.push('foo');
+events.push('bar');
 
 // Read events from the queue
 for (const event of events.read(subscriber)) {
-    console.log('consumed ' + event);
+  console.log('consumed ' + event);
 }
 ```
 
-You can subscribe to queues as often but you want, but it is important that all subscribers 
-will consume the queue or else it will continue to grow indefinitely.
+You can subscribe to a queue as often as you want, but it is important that all 
+subscribers consume the queue. Otherwise, it will grow indefinitely.
 
 ```ts
 const subscriber1 = events.subscribe();

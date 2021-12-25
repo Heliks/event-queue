@@ -10,8 +10,8 @@
     "outDir": "./lib"
   },
   "exclude": [
-    "**/__test__/**",
-    "**/node_modules/**",
+    "**/*.spec.ts",
+    "node_modules/**",
     "lib/**"
   ]
 }
