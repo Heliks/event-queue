@@ -55,4 +55,9 @@ export class Subscriber<E = unknown> {
     return this._unread;
   }
 
+  /** Reads the next unread event, or `undefined` if there are none. */
+  public next(): E | undefined {
+    return this.unread.shift();
+  }
+
 }
