@@ -20,6 +20,11 @@ export class EventQueue<E = unknown> {
    */
   private readonly subscribers: Subscriber<E>[] = [];
 
+  /** Returns the total amount of subscribers. */
+  public size(): number {
+    return this.subscribers.length;
+  }
+
   /** Subscribes to this queue. */
   public subscribe(): Subscriber<E> {
     const subscriber = new Subscriber<E>();
