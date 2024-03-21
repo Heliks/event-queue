@@ -13,37 +13,35 @@ import { Subscriber } from './subscriber';
  */
 export class EventQueue<E = unknown> {
 
-  /**
-   * Contains all subscribers.
-   *
-   * @internal
-   */
-  private readonly subscribers: Subscriber<E>[] = [];
+  /** @internal */
+  private readonly subscribers = new Set<Subscriber<E>>();
 
   /** Returns the total amount of subscribers. */
   public size(): number {
-    return this.subscribers.length;
+    return this.subscribers.size;
   }
 
-  /** Subscribes to this queue. */
-  public subscribe(): Subscriber<E> {
-    const subscriber = new Subscriber<E>();
-
-    this.subscribers.push(subscriber);
-
-    return subscriber;
-  }
-
-  /**
-   * Adds a new unread `event` to all {@link Subscriber subscribers} of
-   * this queue.
-   */
+  /** Adds a new unread `event` to all {@link Subscriber subscribers} of this queue. */
   public push(event: E): this {
     for (const subscriber of this.subscribers) {
       subscriber.push(event);
     }
 
     return this;
+  }
+
+  /** Subscribes to this queue. */
+  public subscribe(): Subscriber<E> {
+    const subscriber = new Subscriber<E>();
+
+    this.subscribers.add(subscriber);
+
+    return subscriber;
+  }
+
+  /** Unsubscribes the given `subscriber` from the event queue. */
+  public unsubscribe(subscriber: Subscriber<E>): void {
+    this.subscribers.delete(subscriber);
   }
 
 }
