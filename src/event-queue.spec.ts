@@ -4,11 +4,7 @@ import { Subscriber } from './subscriber';
 
 describe('EventQueue', () => {
   // Mock event.
-  enum TestEvent {
-    A,
-    B,
-    C
-  }
+  enum TestEvent { A, B }
 
   let events: EventQueue<TestEvent>;
 
@@ -29,5 +25,19 @@ describe('EventQueue', () => {
     const size = subscriber.size();
 
     expect(size).toBe(2);
+  });
+
+  it('should no longer push events to unsubscribed subscribers', () => {
+    const subscriber = events.subscribe();
+
+    events.push(TestEvent.A);
+    events.unsubscribe(subscriber);
+    events.push(TestEvent.B);
+
+    const unread = subscriber.read();
+
+    expect(unread).toEqual([
+      TestEvent.A
+    ])
   });
 });
