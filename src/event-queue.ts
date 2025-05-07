@@ -2,14 +2,15 @@ import { Subscriber } from './subscriber';
 
 
 /**
- * An event queue pushes events to {@link Subscriber subscribers}.
+ * A pull based event emitter.
  *
- * In contrast to typical event emitters, event queues are pull based. Each event
- * must therefore be read manually & synchronously.
+ * In contrast to typical event emitters, event queues don't invoke callbacks or other
+ * event logic when the event occurs. Instead, events are pushed down to a queues
+ * subscribers, where they can be read manually.
  *
- * This type of event processing is not meant for normal web-development, but rather,
- * niches like game development where we need to ensure a processing order of certain
- * systems (input -> rendering, etc.) for frame-perfect responsiveness.
+ * This type of event processing is counterproductive for normal web development and is
+ * mainly meant for game development, where processing order and frame precision need to
+ * be ensured.
  */
 export class EventQueue<E = unknown> {
 
@@ -21,16 +22,13 @@ export class EventQueue<E = unknown> {
     return this.subscribers.size;
   }
 
-  /** Adds a new unread `event` to all {@link Subscriber subscribers} of this queue. */
-  public push(event: E): this {
-    for (const subscriber of this.subscribers) {
-      subscriber.push(event);
-    }
-
-    return this;
-  }
-
-  /** Subscribes to this queue. */
+  /**
+   * Subscribes to this queue.
+   *
+   * Each subscriber must at some point read the events that it has subscribed to or
+   * otherwise, their backlog of unread events can grow indefinitely and cause memory
+   * leaks.
+   */
   public subscribe(): Subscriber<E> {
     const subscriber = new Subscriber<E>();
 
@@ -42,6 +40,20 @@ export class EventQueue<E = unknown> {
   /** Unsubscribes the given `subscriber` from the event queue. */
   public unsubscribe(subscriber: Subscriber<E>): void {
     this.subscribers.delete(subscriber);
+  }
+
+  /** Adds a new unread `event` to all {@link Subscriber subscribers} of this queue. */
+  public push(event: E): this {
+    for (const subscriber of this.subscribers) {
+      if (subscriber.valid) {
+        subscriber.push(event);
+      }
+      else {
+        this.unsubscribe(subscriber);
+      }
+    }
+
+    return this;
   }
 
 }

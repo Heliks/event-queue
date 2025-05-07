@@ -15,6 +15,13 @@ export type Unread<E> = readonly E[];
 export class Subscriber<E = unknown> {
 
   /**
+   * Indicates if the subscriber can receive events. The subscriber becomes invalid
+   * after it has been {@link unsubscribe unsubscribed}. Invalid subscribers will
+   * unsubscribe from their {@link EventQueue} automatically.
+   */
+  public valid = true;
+
+  /**
    * Contains all unread events in this subscriber.
    *
    * @internal
@@ -58,6 +65,13 @@ export class Subscriber<E = unknown> {
   /** Reads the next unread event, or `undefined` if there are none. */
   public next(): E | undefined {
     return this.unread.shift();
+  }
+
+  /** Unsubscribes from all future events. */
+  public unsubscribe(): this {
+    this.valid = false;
+
+    return this;
   }
 
 }

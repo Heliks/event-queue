@@ -1,9 +1,9 @@
-Pull based event emitter (event queue). 
+A pull based event emitter.
 
+In contrast to typical event emitters, event queues don't invoke callbacks or other
+event logic when the event occurs. Instead, events are pushed down to a queues
+subscribers, where they can be read manually.
 
-In contrast to typical event emitters, event queues are pull based. Each event
-must therefore be read manually & synchronously.
-
-This type of event processing is not meant for normal web-development, but rather,
-niches like game development where we need to ensure a processing order of certain
-systems (input -> rendering, etc.) for frame-perfect responsiveness. 
+This type of event processing is counterproductive for normal web development and is
+mainly meant for game development, where processing order and frame precision need to
+be ensured.
